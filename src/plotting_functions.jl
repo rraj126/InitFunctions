@@ -197,6 +197,8 @@ function heatplot(Data::Array{<:Real, 2}; contours::Bool = false, levels::Array{
         ax.clabel(cs, flt_levels, fmt = "%0.2f")
     end
 end;
+
+heatplot(Data::BitArray{2}) = heatplot(1 .* Data)
                                         
 function barplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::Array{<:Real, 1} = zeros(Float64, 1), yerror::Bool = true, bottom = "", color = "", label::String = "")
     ax = gca()
