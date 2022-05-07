@@ -284,8 +284,10 @@ function plotNo(N...)
     
     fig = gcf()
     plotted_axes = fig.get_axes()
-    
-    length(plotted_axes) < axisNo ? error("Axis doesn't exist") : subplot(plotted_axes[axisNo])
+    number_of_axes = length(plotted_axes)
+
+    m, n = size(auto_reshape(ones(number_of_axes)))
+    number_of_axes < axisNo ? error("Axis doesn't exist") : subplot(m, n, axisNo)
 end;
 
 
