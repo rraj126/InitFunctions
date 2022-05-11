@@ -292,7 +292,7 @@ function gridplot2(data::Union{Matrix{<:Real}, Dict{Int64, Matrix{<:Real}}}, row
     end
 end
 
-function mlplot(data::AbstractArray{<:Real}; xvalues::Union{UnitRange, StepRange, Vector{<:Real}} = zeros(0), cmap::Symbol = :tab20, labels::Vector{String} = Vector{String}(undef, 0), style::String = "o-", linewidth::Float64 = 3.0)
+function mlplot(data::AbstractArray{<:Real}; xvalues::Union{AbstractRange{<:Real}, Vector{<:Real}} = zeros(0), cmap::Symbol = :tab20, labels::Vector{String} = Vector{String}(undef, 0), style::String = "o-", linewidth::Float64 = 3.0)
     m, n = size(data)
 
     !isempty(xvalues) && length(xvalues) == n ? nothing : xvalues = 0:n-1
