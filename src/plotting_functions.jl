@@ -291,3 +291,20 @@ function gridplot2(data::Union{Matrix{<:Real}, Dict{Int64, Matrix{<:Real}}}, row
         set_axprops(ax, false)
     end
 end
+
+function mlplot(data::AbstractArray{<:Real}; xvalues::Union{UnitRange, StepRange, Vector{<:Real}} = zeros(0), cmap::Symbol = :tab20, labels::Vector{String} = Vector{String}(undef, 0), style::String = "o-", linewidth::Float64 = 3.0)
+    m, n = size(data)
+
+    !isempty(xvalues) && length(xvalues) == n ? nothing : xvalues = 0:n-1
+    color_values = collect(1/m:1/m:1)
+
+
+    if isempty(labels)
+        for i in 1:m plot(xvalues, vec(data[i, :]), style, linewidth = linewidth, color = plt.cm[cmap](color_values[i])) end
+
+    else
+        length(labels) != m ? begin @warn "improper labels, using index as labels"; labels = string.(1:m) end : nothing
+        for i in 1:m plot(xvalues, vec(data[i, :]), style, linewidth = linewidth, color = plt.cm[cmap](color_values[i]), label = labels[i]) end
+
+    end
+end
