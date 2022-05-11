@@ -93,10 +93,10 @@ function gridplot(X::Array{<:Real, 2}; atom_dims::Tuple{Int64, Int64} = (0, 0), 
     end
 end;
 
-function histplot(Data::Array{<:Real, 1}; bins::Array{<:Real, 1} = zeros(1), normalized::Bool = true, color = "", alpha::Float64 = 1.0)
+function histplot(Data::Array{<:Real, 1}; bins::AbstractRange{<:Real} = 0:-1, normalized::Bool = true, color = "", alpha::Float64 = 1.0)
     ax = gca()
     isempty(color) ? color = COLOR_CYCLE[1] : nothing                                                    
-    sum(bins) == 0 ? (values, bins) = ax.hist(Data, color = color, alpha = alpha) : (values, bins) = ax.hist(Data, bins, color = color, alpha = alpha)
+    length(bins) == 0 ? (values, bins) = ax.hist(Data, color = color, alpha = alpha) : (values, bins) = ax.hist(Data, bins, color = color, alpha = alpha)
     
     maxValue_normalized = maximum(values)/length(Data)
     num_digits = ceil(abs(log10(maxValue_normalized)))
@@ -108,12 +108,12 @@ function histplot(Data::Array{<:Real, 1}; bins::Array{<:Real, 1} = zeros(1), nor
     normalized ? yticks(y_values, y_pos) : nothing
 end;
 
-function bxplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::Array{Int64, 1} = zeros(Int64, 1), showMeans::Bool = true, showFliers::Bool = true, color = "", label::String = "", swarm::Bool = false)
+function bxplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::AbstractRange{<:Real} = 0:-1, showMeans::Bool = true, showFliers::Bool = true, color = "", label::String = "", swarm::Bool = false)
     ax = gca()
     data_type, number_of_boxes = get_nboxes(Data)
 
     ws = 0.7*ones(number_of_boxes)
-    sum(pos) == 0 ? pos = collect(1:number_of_boxes) : nothing 
+    length(pos) == 0 ? begin pos = 1:number_of_boxes end : nothing 
     bp = ax.boxplot(Data, widths = ws, positions = pos, showmeans = showMeans, showfliers = showFliers, patch_artist = true)
     
     ax.set_title("dp", fontsize = 0)
@@ -133,12 +133,12 @@ function bxplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::Array{Int64, 1} =
     end      
 end;
 
-function vlnplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::Array{Int64, 1} = zeros(Int64, 1), showMeans::Bool = true, showMedians::Bool = true, color = "", label::String = "", swarm::Bool = false)
+function vlnplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::AbstractRange{<:Real} = 0:-1, showMeans::Bool = true, showMedians::Bool = true, color = "", label::String = "", swarm::Bool = false)
     ax = gca()
     data_type, number_of_boxes = get_nboxes(Data)
 
     ws = 0.7*ones(number_of_boxes)
-    sum(pos) == 0 ? pos = collect(1:number_of_boxes) : nothing 
+    length(pos) == 0 ? begin pos = 1:number_of_boxes end : nothing 
     vp = ax.violinplot(Data, widths = ws, positions = pos, showmeans = showMeans, showmedians = showMedians)
     
     ax.set_title("dp", fontsize = 0)
@@ -200,14 +200,14 @@ end;
 
 heatplot(Data::BitArray{2}) = heatplot(1 .* Data)
                                         
-function barplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::Array{<:Real, 1} = zeros(Float64, 1), yerror::Bool = true, bottom = "", color = "", label::String = "")
+function barplot(Data::Union{ArrayOfArray, Array{<:Real}}; pos::AbstractRange{<:Real} = 0:-1, yerror::Bool = true, bottom = "", color = "", label::String = "")
     ax = gca()
     
     data_type, number_of_boxes = get_nboxes(Data)
     isempty(color) ? color = COLOR_CYCLE[1] : nothing
     
     if number_of_boxes == 1
-        sum(pos) == 0 ? pos = collect(1:length(Data)) : nothing
+        length(pos) == 0 ? begin pos = 1:length(Data) end : nothing
         isempty(label) ? ax.bar(pos, Data, align = "center", width = 0.7, color = color) : ax.bar(pos, Data, align = "center", width = 0.7, color = color, label = label)
     else
         if data_type == "array"
