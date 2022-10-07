@@ -5,12 +5,23 @@ COLOR_CYCLE = ["#00bfff"; "#ff0000"; "#69ef69"; "#cc3fff"; "#ff7c6d"]
 export create_axes, plotNo, config_plots, COLOR_CYCLE
 
 
-function create_axes(x...)
-    length(x) == 0 ? number_of_axes = 1 : (number_of_axes,) = x
-    m, n = size(auto_reshape(ones(number_of_axes)))
-    
-    fig, axes = subplots(m, n)  
-    fig.set_size_inches(6.5*n, 4*m)
+function create_axes(N::Int64; projections::Union{String, Vector{String}} = "")
+    projection_array = Vector{String}(undef, N)
+    if isa(projections, String)
+        isempty(projections) ? projection_array .= "rectilinear" : projection_array .= projections
+    else
+        projection_array = repeat(projections, ceil(Int64, N/length(projections))) 
+    end
+
+    m, n = size(auto_reshape(trues(N)))
+    axes = Matrix{PyObject}(undef, m, n); ax_count = 1
+
+    for i in 1:m, j in 1:n
+        axes[i, j] = subplot(m, n, ax_count, projection = projection_array[ax_count])
+        ax_count += 1
+    end
+
+    fig = gcf(); fig.set_size_inches(6.5*n, 4*m)
     
     return axes
 end;
